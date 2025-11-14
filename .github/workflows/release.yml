@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          cd shared && npm install && npm run build
+          cd ../backend && npm install
+          cd ../frontend && npm install
+
+      - name: Build all packages
+        run: |
+          npm run build
+
+      - name: Create Release Assets
+        run: |
+          mkdir -p release
+          cp -r backend/dist release/backend
+          cp -r frontend/dist release/frontend
+          cp -r shared/dist release/shared
+          cp README.md USAGE.md release/
+          cd release && tar -czf ../astra-release.tar.gz .
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: astra-release.tar.gz
+          generate_release_notes: true

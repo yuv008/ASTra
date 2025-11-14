@@ -1,0 +1,106 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop, claude/** ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          cd shared && npm install && npm run build
+          cd ../backend && npm install
+
+      - name: Lint backend
+        run: cd backend && npm run lint
+
+      - name: Run backend tests
+        run: cd backend && npm test
+
+      - name: Build backend
+        run: cd backend && npm run build
+
+  test-frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          cd shared && npm install && npm run build
+          cd ../frontend && npm install
+
+      - name: Lint frontend
+        run: cd frontend && npm run lint
+
+      - name: Build frontend
+        run: cd frontend && npm run build
+
+  code-analysis:
+    name: Self Analysis
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          cd shared && npm install && npm run build
+          cd ../backend && npm install && npm run build
+
+      - name: Start Analysis Server
+        run: |
+          cd backend && npm start &
+          sleep 5
+
+      - name: Analyze Project
+        run: |
+          curl -X POST http://localhost:5000/api/analyze/project \
+            -H "Content-Type: application/json" \
+            -d '{"projectPath": ".", "enableAI": false}' \
+            > analysis-results.json
+
+      - name: Upload Analysis Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: analysis-results
+          path: analysis-results.json
+
+  all-tests-passed:
+    name: All Tests Passed
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend, code-analysis]
+    steps:
+      - name: Success
+        run: echo "✅ All tests passed!"

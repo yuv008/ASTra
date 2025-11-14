@@ -85,13 +85,28 @@ jobs:
       - name: Start Analysis Server
         run: |
           cd backend && npm start &
-          sleep 5
+          SERVER_PID=$!
+
+          # Wait for server to be ready (max 30 seconds)
+          echo "Waiting for server to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5000/api/health > /dev/null; then
+              echo "Server is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Server failed to start within 30 seconds"
+              kill $SERVER_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 1
+          done
 
       - name: Analyze Project
         run: |
           curl -X POST http://localhost:5000/api/analyze/project \
             -H "Content-Type: application/json" \
-            -d '{"projectPath": ".", "enableAI": false}' \
+            -d '{"projectPath": "./backend/src", "enableAI": false}' \
             > analysis-results.json
 
       - name: Upload Analysis Results

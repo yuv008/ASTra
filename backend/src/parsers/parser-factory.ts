@@ -29,6 +29,7 @@ export class ParserFactory {
         case Language.PYTHON:
           if (!this.parsers.has(language)) {
             // Dynamic import to avoid loading tree-sitter at module initialization
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
             const { PythonParser } = require('./python-parser');
             this.parsers.set(language, new PythonParser());
           }

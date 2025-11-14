@@ -27,7 +27,7 @@ jobs:
           cd ../backend && npm install
 
       - name: Rebuild native modules
-        run: npm rebuild tree-sitter tree-sitter-python
+        run: npm rebuild --build-from-source tree-sitter tree-sitter-python
 
       - name: Lint backend
         run: cd backend && npm run lint

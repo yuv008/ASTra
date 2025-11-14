@@ -34,7 +34,30 @@ app.get('/api/ollama/status', async (req: Request, res: Response) => {
   }
 });
 
-// Analyze a file
+// Analyze code content directly (for unsaved files, in-memory analysis)
+app.post('/api/analyze/code', async (req: Request, res: Response) => {
+  try {
+    const { code, fileName, language, enableAI } = req.body;
+
+    if (!code) {
+      return res.status(400).json({ error: 'code is required' });
+    }
+
+    const result = await analysisService.analyzeCode(code, {
+      fileName: fileName || 'untitled.js',
+      language,
+      enableAI,
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      error: 'Analysis failed',
+      message: (error as Error).message,
+    });
+  }
+});
+
+// Analyze a file from disk
 app.post('/api/analyze/file', async (req: Request, res: Response) => {
   try {
     const { filePath, enableAI } = req.body;

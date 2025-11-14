@@ -86,19 +86,23 @@ async function analyzeDocument(
   issuesProvider: IssuesTreeProvider,
   metricsProvider: MetricsTreeProvider
 ) {
-  const filePath = document.uri.fsPath;
   const config = vscode.workspace.getConfiguration('astra');
   const enableAI = config.get<boolean>('enableAI', true);
+
+  // Get document content and file name
+  const code = document.getText();
+  const fileName = document.fileName || document.uri.path.split('/').pop() || 'untitled.js';
 
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: 'ASTra: Analyzing file...',
+      title: 'ASTra: Analyzing code...',
       cancellable: false,
     },
     async () => {
       try {
-        const result = await analysisService.analyzeFile(filePath, enableAI);
+        // Analyze code content directly (works with unsaved files!)
+        const result = await analysisService.analyzeCode(code, fileName, enableAI);
 
         // Update diagnostics
         diagnosticsProvider.updateDiagnostics(document.uri, result);

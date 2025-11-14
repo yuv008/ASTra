@@ -59,6 +59,15 @@ export class AnalysisService {
     }
   }
 
+  async analyzeCode(code: string, fileName: string, enableAI: boolean = true): Promise<AnalysisResult> {
+    const response = await this.client.post('/api/analyze/code', {
+      code,
+      fileName,
+      enableAI,
+    });
+    return response.data;
+  }
+
   async analyzeFile(filePath: string, enableAI: boolean = true): Promise<AnalysisResult> {
     const response = await this.client.post('/api/analyze/file', {
       filePath,

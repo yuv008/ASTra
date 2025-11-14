@@ -11,6 +11,8 @@ export interface AnalysisOptions {
   enableAI?: boolean;
   includePatterns?: string[];
   excludePatterns?: string[];
+  fileName?: string;
+  language?: string;
 }
 
 export class AnalysisService {
@@ -25,7 +27,31 @@ export class AnalysisService {
   }
 
   /**
-   * Analyze a single file
+   * Analyze code content directly (for unsaved/in-memory files)
+   */
+  async analyzeCode(code: string, options: AnalysisOptions = {}): Promise<FileAnalysisResult> {
+    const fileName = options.fileName || 'untitled.js';
+
+    // Parse the code
+    const parseResult = await this.parserFactory.parseCode(code, fileName);
+
+    // Run static analysis
+    const analysisResult = await this.analyzerCoordinator.analyzeFile(parseResult);
+
+    // Run AI review if enabled
+    if (options.enableAI) {
+      const aiSuggestions = await this.aiReviewer.reviewCode(
+        parseResult,
+        analysisResult.issues
+      );
+      analysisResult.suggestions.push(...aiSuggestions);
+    }
+
+    return analysisResult;
+  }
+
+  /**
+   * Analyze a single file from disk
    */
   async analyzeFile(filePath: string, options: AnalysisOptions = {}): Promise<FileAnalysisResult> {
     // Parse the file

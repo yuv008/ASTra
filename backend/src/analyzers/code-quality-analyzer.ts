@@ -14,8 +14,6 @@ export class CodeQualityAnalyzer extends BaseAnalyzer {
 
     const declaredVariables = new Set<string>();
     const usedVariables = new Set<string>();
-    const imports = new Set<string>();
-    const usedImports = new Set<string>();
 
     ASTTraverser.traverse(ast, {
       // Track variable declarations
@@ -47,15 +45,6 @@ export class CodeQualityAnalyzer extends BaseAnalyzer {
       // Track variable usage
       Identifier: (node) => {
         if (node.name) usedVariables.add(node.name);
-      },
-
-      // Track imports
-      ImportDeclaration: (node) => {
-        node.specifiers?.forEach((spec: ASTNode) => {
-          if (spec.local?.name) {
-            imports.add(spec.local.name);
-          }
-        });
       },
 
       // Magic numbers

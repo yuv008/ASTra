@@ -1,7 +1,6 @@
 import { AISuggestion, SuggestionType, Issue, IssueCategory } from '@astra/shared';
 import { OllamaClient } from './ollama-client';
 import { ParseResult } from '../parsers/base-parser';
-import { FileAnalysisResult } from '@astra/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface AIReviewOptions {

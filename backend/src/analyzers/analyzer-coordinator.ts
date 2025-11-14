@@ -1,4 +1,4 @@
-import { Issue, FileAnalysisResult, FileInfo, Language } from '@astra/shared';
+import { Issue, FileAnalysisResult, FileInfo, ComplexityIssue } from '@astra/shared';
 import { ParseResult } from '../parsers/base-parser';
 import { IAnalyzer, AnalyzerContext } from './base-analyzer';
 import { SecurityAnalyzer } from './security-analyzer';
@@ -63,9 +63,9 @@ export class AnalyzerCoordinator {
     const linesOfCode = lines.length;
 
     // Calculate average complexity from complexity issues
-    const complexityIssues = issues.filter((i) => i.category === 'complexity');
+    const complexityIssues = issues.filter((i) => i.category === 'complexity') as ComplexityIssue[];
     const avgComplexity = complexityIssues.length > 0
-      ? complexityIssues.reduce((sum, i: any) => sum + (i.complexityScore || 0), 0) / complexityIssues.length
+      ? complexityIssues.reduce((sum, i) => sum + (i.complexityScore || 0), 0) / complexityIssues.length
       : 1;
 
     // Simple maintainability index calculation

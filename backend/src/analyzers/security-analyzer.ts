@@ -311,7 +311,7 @@ export class SecurityAnalyzer extends BaseAnalyzer {
     }
   }
 
-  private findParentProperty(node: ASTNode): string | null {
+  private findParentProperty(_node: ASTNode): string | null {
     // This is a simplified version - in real implementation, you'd track parent context
     return null;
   }

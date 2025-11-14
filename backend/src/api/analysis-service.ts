@@ -102,7 +102,7 @@ export class AnalysisService {
    */
   private async findFiles(
     directoryPath: string,
-    options: AnalysisOptions
+    _options: AnalysisOptions
   ): Promise<string[]> {
     const files: string[] = [];
     const supportedExtensions = this.parserFactory.getSupportedExtensions();

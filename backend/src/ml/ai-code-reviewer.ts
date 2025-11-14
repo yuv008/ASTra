@@ -165,59 +165,107 @@ export class AICodeReviewer {
    * Build security review prompt
    */
   private buildSecurityReviewPrompt(issue: Issue, codeSnippet: string): string {
-    return `Analyze this security issue and provide a specific fix:
+    return `You are a security expert. Analyze this security vulnerability and provide a SPECIFIC, ACTIONABLE fix with exact code.
 
-Issue: ${issue.message}
+**Security Issue:**
+${issue.message}
 Rule: ${issue.ruleId}
 
-Code:
+**Vulnerable Code:**
 \`\`\`
 ${codeSnippet}
 \`\`\`
 
-Provide:
-1. Brief explanation of the vulnerability
-2. Specific code fix
-3. Why this fix is secure
+**Required Response Format:**
 
-Be concise (max 200 words).`;
+1. **Vulnerability Explanation** (2-3 sentences):
+   - What exactly makes this code vulnerable?
+   - What attack vector does this enable?
+
+2. **Secure Code Fix** (provide exact replacement code):
+   \`\`\`
+   // Show the EXACT fixed code here
+   \`\`\`
+
+3. **Why This Fix Works** (1-2 sentences):
+   - Explain the security mechanism that prevents the vulnerability
+
+Be SPECIFIC with code examples. Avoid generic advice like "sanitize input" - show HOW to sanitize it.`;
   }
 
   /**
    * Build refactoring prompt
    */
   private buildRefactoringPrompt(code: string, filePath: string): string {
-    return `Review this code for refactoring opportunities:
+    return `You are a senior software architect. Review this code and provide DETAILED, SPECIFIC refactoring suggestions with concrete examples.
 
-File: ${filePath}
+**File:** ${filePath}
 
+**Code:**
 \`\`\`
 ${code.split('\n').slice(0, 50).join('\n')}
 \`\`\`
 
-Suggest 2-3 specific improvements focusing on:
-- Code complexity
-- Readability
-- Maintainability
-- Best practices
+**Required Response Format:**
 
-Format each suggestion as:
-[Type]: Brief description
-Reasoning: Why this improves the code`;
+Provide 2-3 refactoring suggestions. For EACH suggestion:
+
+### [Refactoring Type]: Specific Action
+
+**Current Problem:**
+- Describe the exact issue (e.g., "The 85-line handleSubmit function contains 7 nested if-statements")
+- Explain the impact (e.g., "This makes it difficult to test error handling in isolation")
+
+**Specific Solution:**
+- Provide a concrete refactoring step (e.g., "Extract validation logic into validateFormData() function")
+- Show pseudocode or a brief code example if helpful
+
+**Benefit:**
+- Quantify improvement (e.g., "Reduces complexity from 15 to 5, improves testability")
+
+Examples of good suggestions:
+- "Extract the 3 database queries into a UserRepository class"
+- "Replace the switch statement on type with a Strategy pattern using a handler map"
+- "Combine the 5 boolean flags into a single state enum"
+
+DO NOT give generic advice like "improve readability" - be SPECIFIC and ACTIONABLE.`;
   }
 
   /**
    * Build performance prompt
    */
   private buildPerformancePrompt(code: string): string {
-    return `Analyze this code for performance improvements:
+    return `You are a performance optimization specialist. Analyze this code for SPECIFIC performance bottlenecks.
 
+**Code:**
 \`\`\`
 ${code.split('\n').slice(0, 40).join('\n')}
 \`\`\`
 
-Identify 1-2 key performance bottlenecks and suggest specific optimizations.
-Focus on algorithmic efficiency, unnecessary operations, and async patterns.`;
+**Required Response Format:**
+
+Identify 1-2 performance issues. For EACH issue:
+
+### Performance Issue: [Specific Problem]
+
+**Current Code Problem:**
+- Identify the exact bottleneck (e.g., "forEach loop on line 23 calls API for each item")
+- Estimate impact (e.g., "O(n²) complexity with nested loops")
+
+**Optimized Solution:**
+- Provide specific optimization (e.g., "Batch all API calls using Promise.all()")
+- Show example code snippet
+
+**Performance Gain:**
+- Quantify expected improvement (e.g., "Reduces from O(n²) to O(n), 10x faster for 100+ items")
+
+Examples of good suggestions:
+- "Replace array.filter().map() chain with single reduce() to avoid double iteration"
+- "Cache the result of expensive calculateMetrics() since input doesn't change between renders"
+- "Use memoization for the recursive fibonacci calculation"
+
+Focus on: Algorithmic complexity, unnecessary operations, inefficient data structures, blocking operations.
+Be SPECIFIC - avoid generic advice like "optimize loops".`;
   }
 
   /**

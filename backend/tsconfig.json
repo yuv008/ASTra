@@ -2,16 +2,16 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "module": "commonjs",
     "target": "ES2022",
     "lib": ["ES2022"],
     "moduleResolution": "node",
     "types": ["node"],
+    "composite": false,
     "paths": {
-      "@astra/shared": ["../shared/src"]
+      "@astra/shared": ["../shared/dist"]
     }
   },
-  "include": ["src/**/*", "tests/**/*", "vitest.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "tests"]
 }

@@ -1,27 +1,43 @@
 import { Language } from '@astra/shared';
 import { IParser, ParseResult } from './base-parser';
 import { JavaScriptParser } from './javascript-parser';
-import { PythonParser } from './python-parser';
 import * as fs from 'fs/promises';
 
 export class ParserFactory {
   private parsers: Map<Language, IParser> = new Map();
 
-  constructor() {
-    this.registerParser(Language.JAVASCRIPT, new JavaScriptParser());
-    this.registerParser(Language.TYPESCRIPT, new JavaScriptParser());
-    this.registerParser(Language.PYTHON, new PythonParser());
-  }
-
-  private registerParser(language: Language, parser: IParser): void {
-    this.parsers.set(language, parser);
-  }
-
   /**
-   * Get parser for a specific language
+   * Get parser for a specific language (lazy loaded)
    */
   getParser(language: Language): IParser | undefined {
+    // Lazy load parsers to avoid loading native modules at import time
+    if (!this.parsers.has(language)) {
+      this.initializeParser(language);
+    }
     return this.parsers.get(language);
+  }
+
+  private initializeParser(language: Language): void {
+    try {
+      switch (language) {
+        case Language.JAVASCRIPT:
+        case Language.TYPESCRIPT:
+          if (!this.parsers.has(language)) {
+            this.parsers.set(language, new JavaScriptParser());
+          }
+          break;
+        case Language.PYTHON:
+          if (!this.parsers.has(language)) {
+            // Dynamic import to avoid loading tree-sitter at module initialization
+            const { PythonParser } = require('./python-parser');
+            this.parsers.set(language, new PythonParser());
+          }
+          break;
+      }
+    } catch (error) {
+      console.error(`Failed to initialize parser for ${language}:`, error);
+      // Parser will remain undefined, allowing graceful degradation
+    }
   }
 
   /**

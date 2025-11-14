@@ -1,0 +1,36 @@
+{
+  "name": "astra",
+  "version": "1.0.0",
+  "description": "Local-First AI Code Review & Static Analysis Platform",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "build:shared": "cd shared && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm run test",
+    "test:frontend": "cd frontend && npm run test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "clean": "rm -rf node_modules backend/node_modules frontend/node_modules shared/node_modules backend/dist frontend/dist shared/dist"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

@@ -44,3 +44,9 @@ coverage/
 tmp/
 temp/
 *.tmp
+
+# Test build artifacts
+*.test.d.ts
+*.test.d.ts.map
+*.test.js
+*.test.js.map

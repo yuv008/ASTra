@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { AnalysisService } from './services/analysis-service';
 import { DiagnosticsProvider } from './providers/diagnostics-provider';
 import { ResultsPanel } from './panels/results-panel';
+import { ChatPanel } from './panels/chat-panel';
 import { IssuesTreeProvider } from './providers/issues-tree-provider';
 import { MetricsTreeProvider } from './providers/metrics-tree-provider';
 
@@ -51,6 +52,12 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand('astra.stopServer', async () => {
       await stopAnalysisServer();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('astra.chatWithCodebase', () => {
+      ChatPanel.createOrShow(context.extensionUri);
     })
   );
 

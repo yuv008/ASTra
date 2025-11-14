@@ -51,6 +51,11 @@
       {
         "command": "astra.stopServer",
         "title": "ASTra: Stop Analysis Server"
+      },
+      {
+        "command": "astra.chatWithCodebase",
+        "title": "ASTra: Chat with Codebase",
+        "icon": "$(comment-discussion)"
       }
     ],
     "configuration": {
@@ -96,6 +101,13 @@
         {
           "command": "astra.analyzeProject",
           "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "astra.chatWithCodebase",
+          "group": "navigation",
+          "when": "editorTextFocus"
         }
       ]
     },

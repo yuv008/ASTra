@@ -46,7 +46,8 @@ function Dashboard({ onError }: DashboardProps) {
   const getMetricsData = () => {
     if (!result) return null;
 
-    if ('metrics' in result && result.metrics) {
+    // Check if it's a project analysis (has 'files' array and 'projectPath')
+    if ('projectPath' in result && 'files' in result) {
       // Project analysis
       const projectResult = result as AnalysisResult;
       return {

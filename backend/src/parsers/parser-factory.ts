@@ -95,7 +95,17 @@ export class ParserFactory {
    */
   isSupported(filePath: string): boolean {
     const language = this.detectLanguage(filePath);
-    return language !== Language.UNKNOWN && this.parsers.has(language);
+    if (language === Language.UNKNOWN) {
+      return false;
+    }
+
+    // Try to initialize the parser if not already loaded
+    if (!this.parsers.has(language)) {
+      this.initializeParser(language);
+    }
+
+    // Check if parser was successfully initialized
+    return this.parsers.has(language);
   }
 
   /**

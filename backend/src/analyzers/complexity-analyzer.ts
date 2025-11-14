@@ -151,17 +151,17 @@ export class ComplexityAnalyzer extends BaseAnalyzer {
     let complexity = 1; // Start with 1
 
     ASTTraverser.traverse(node, {
-      IfStatement: () => complexity++,
-      ConditionalExpression: () => complexity++,
-      ForStatement: () => complexity++,
-      ForInStatement: () => complexity++,
-      ForOfStatement: () => complexity++,
-      WhileStatement: () => complexity++,
-      DoWhileStatement: () => complexity++,
+      IfStatement: () => { complexity++; },
+      ConditionalExpression: () => { complexity++; },
+      ForStatement: () => { complexity++; },
+      ForInStatement: () => { complexity++; },
+      ForOfStatement: () => { complexity++; },
+      WhileStatement: () => { complexity++; },
+      DoWhileStatement: () => { complexity++; },
       SwitchCase: (caseNode) => {
         if (caseNode.test) complexity++; // Don't count default case
       },
-      CatchClause: () => complexity++,
+      CatchClause: () => { complexity++; },
       LogicalExpression: (logicalNode) => {
         if (logicalNode.operator === '&&' || logicalNode.operator === '||') {
           complexity++;

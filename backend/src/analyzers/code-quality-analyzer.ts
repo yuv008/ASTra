@@ -23,17 +23,19 @@ export class CodeQualityAnalyzer extends BaseAnalyzer {
         }
       },
 
-      // Track function parameters
+      // Track function parameters and check for long parameter lists
       FunctionDeclaration: (node) => {
         node.params?.forEach((param: ASTNode) => {
           if (param.name) declaredVariables.add(param.name);
         });
+        this.checkLongParameterList(node, filePath, sourceCode, issues);
       },
 
       FunctionExpression: (node) => {
         node.params?.forEach((param: ASTNode) => {
           if (param.name) declaredVariables.add(param.name);
         });
+        this.checkLongParameterList(node, filePath, sourceCode, issues);
       },
 
       ArrowFunctionExpression: (node) => {
@@ -50,15 +52,6 @@ export class CodeQualityAnalyzer extends BaseAnalyzer {
       // Magic numbers
       Literal: (node) => {
         this.checkMagicNumbers(node, filePath, sourceCode, issues);
-      },
-
-      // Long parameter lists
-      FunctionDeclaration: (node) => {
-        this.checkLongParameterList(node, filePath, sourceCode, issues);
-      },
-
-      FunctionExpression: (node) => {
-        this.checkLongParameterList(node, filePath, sourceCode, issues);
       },
 
       // Empty catch blocks

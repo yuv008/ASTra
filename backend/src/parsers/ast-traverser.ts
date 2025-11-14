@@ -1,5 +1,4 @@
 import { ASTNode } from './base-parser';
-import traverse from '@babel/traverse';
 
 // Visitor pattern for AST traversal
 export type VisitorFunction = (node: ASTNode, parent: ASTNode | null, path: string[]) => void | boolean;
@@ -12,13 +11,6 @@ export interface Visitor {
 }
 
 export class ASTTraverser {
-  /**
-   * Traverse a Babel AST using @babel/traverse
-   */
-  static traverseBabel(ast: ASTNode, visitor: any): void {
-    traverse(ast, visitor);
-  }
-
   /**
    * Generic tree traversal for any AST (including Tree-sitter)
    */
